@@ -10,14 +10,22 @@ def total_salary(path):
                 num_developers += 1
             
             average_salary = total_salary / num_developers
-
             return total_salary, average_salary
         
     except FileNotFoundError:
-        print("Файл не знайдено.")
+        return None, "Файл не знайдено."
     except Exception as e:
-        print(f"Сталася помилка: {e}")
-    return 0, 0
+        return None, f"Сталася помилка: {e}"
 
-total, average = total_salary("path/to/salary_file.txt")
-print(f"Загальна сума заробітної плати: {total}, Середня заробітна плата: {average}")
+def main():
+    path = "path/to/salary_file.txt"
+    total, result = total_salary(path)
+    
+    if total is not None:
+        print(f"Загальна сума заробітної плати: {total}, Середня заробітна плата: {result}")
+    else:
+        print(result)
+
+if __name__ == "__main__":
+    main()
+
