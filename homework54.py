@@ -6,6 +6,11 @@ def error_handler(func):
             return f"Error: {str(e)}"
     return wrapper
 
+def parse_input(user_input):
+    cmd, *args = user_input.split()
+    cmd = cmd.strip().lower()
+    return cmd, args
+
 @error_handler
 def add_contact(args, contacts):
     if len(args) != 2:
@@ -67,4 +72,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
