@@ -85,6 +85,8 @@ class AddressBook(UserDict):
         for record in self.data.values():
             if record.birthday:
                 next_birthday = record.birthday.value.replace(year=today.year)
+                if next_birthday < today:
+                    next_birthday = next_birthday.replace(year=today.year + 1)
                 if today <= next_birthday <= today + timedelta(days=days):
                     upcoming_birthdays[record.name.value] = next_birthday
         return upcoming_birthdays
@@ -147,6 +149,21 @@ def birthdays(args, book: AddressBook):
     return result
 
 
+@input_error
+def change_phone(args, book: AddressBook):
+    name, new_phone = args
+    record = book.find(name)
+    if record:
+        try:
+            old_phone = record.phones[0].value  # assuming we edit the first phone
+            record.edit_phone(old_phone, new_phone)
+            return f"Phone number updated for {name}."
+        except IndexError:
+            return f"No phone numbers to update for {name}."
+    else:
+        return f"Contact {name} not found."
+
+
 def parse_input(user_input):
     parts = user_input.strip().split()
     command = parts[0].lower()
@@ -172,17 +189,7 @@ def main():
             print(add_contact(args, book))
 
         elif command == "change":
-            name, new_phone = args
-            record = book.find(name)
-            if record:
-                try:
-                    old_phone = record.phones[0].value  # assuming we edit the first phone
-                    record.edit_phone(old_phone, new_phone)
-                    print(f"Phone number updated for {name}.")
-                except IndexError:
-                    print(f"No phone numbers to update for {name}.")
-            else:
-                print(f"Contact {name} not found.")
+            print(change_phone(args, book))
 
         elif command == "phone":
             name, *_ = args
